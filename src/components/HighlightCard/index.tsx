@@ -20,17 +20,18 @@ export function HighlightCard() {
                     Entrada
                 </Title>
                 <Icon name="arrow-up-circle" />
-
-                <Footer>
-                    <Amount>
-                        R$ 17.400,00
-                    </Amount>
-
-                    <LastTransaction>
-                        Última entrada dia 13 de abril
-                    </LastTransaction>
-                </Footer>
             </Header>
+
+            <Footer>
+                <Amount>
+                    R$ 17.400,00
+                </Amount>
+
+                <LastTransaction>
+                    Última entrada dia 13 de abril
+                </LastTransaction>
+            </Footer>
+
         </Container>
     )
 }
