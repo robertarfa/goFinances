@@ -2,7 +2,7 @@ import React from 'react'
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 import { HighlightCard } from '../../components/HighlightCard'
-import { TransactionCard } from '../../components/TransactionCard'
+import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard'
 
 
 import {
@@ -21,9 +21,15 @@ import {
     TransactionList
 } from './styles'
 
+export interface DataListProps extends TransactionCardProps {
+    id: string,
+}
+
 export function Dashboard() {
-    const data = [
+    const data: DataListProps[] = [
         {
+            id: '1',
+            type: 'positive',
             title: "Desenvolvimento de sites",
             amount: 'R$ 12.000,00',
             category: {
@@ -33,22 +39,26 @@ export function Dashboard() {
             date: '13/04/2021'
         },
         {
-            title: "Desenvolvimento de sites",
-            amount: 'R$ 12.000,00',
+            id: '2',
+            type: 'negative',
+            title: "Hamburgueria",
+            amount: 'R$ 160,00',
             category: {
-                name: 'Vendas',
-                icon: 'dollar-sign'
+                name: 'Alimentação',
+                icon: 'coffee'
             },
-            date: '13/04/2021'
+            date: '10/04/2021'
         },
         {
-            title: "Desenvolvimento de sites",
-            amount: 'R$ 12.000,00',
+            id: '3',
+            type: 'negative',
+            title: "Aluguel apartamento",
+            amount: 'R$ 1200,00',
             category: {
-                name: 'Vendas',
-                icon: 'dollar-sign'
+                name: 'Casa',
+                icon: 'shopping-bag'
             },
-            date: '13/04/2021'
+            date: '18/04/2021'
         },
     ];
 
@@ -104,14 +114,11 @@ export function Dashboard() {
 
                 <TransactionList
                     data={data}
+                    keyExtractor={item => item.id}
                     renderItem={({ item }) =>
                         <TransactionCard data={item} />
                     }
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={
-                        {
-                            padding: getBottomSpace()
-                        }}
+
                 />
 
 
