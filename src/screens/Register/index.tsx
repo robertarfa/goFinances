@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Alert, Keyboard,
     Modal,
     TouchableWithoutFeedback,
 } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import { useForm } from 'react-hook-form'
 
 import { Button } from '../../components/Forms/Button'
 import { CategorySelectButton } from '../../components/Forms/CategorySelectButton'
-import { Input } from '../../components/Forms/Input'
 import { InputForm } from '../../components/Forms/InputForm'
 import { TransactionTypeButton } from '../../components/Forms/TransactionTypeButton'
 import { CategorySelect } from '../CategorySelect'
@@ -40,6 +41,8 @@ export function Register() {
         formState: { errors }
     } = useForm()
 
+    const dataKey = '@gofinances:transactions'
+
     const [transactionType, setTransactionType] = useState('')
     const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 
@@ -52,6 +55,20 @@ export function Register() {
         key: 'category',
         name: 'Categoria'
     })
+
+    useEffect(() => {
+        async function loadData() {
+            const data = await AsyncStorage.getItem(dataKey)
+            console.log('dataKey', JSON.parse(data!))
+        }
+
+        loadData()
+        // async function removeAll() {
+        //     await AsyncStorage.removeItem(dataKey)
+
+        // }
+        // removeAll()
+    }, [])
 
     function handleTransactionTypeSelect(type: 'up' | 'down') {
         setTransactionType(type)
@@ -72,7 +89,7 @@ export function Register() {
         })
     }
 
-    function handleRegister(form: formData) {
+    async function handleRegister(form: formData) {
 
         setTimeout(() => {
             fntCleanErrorMsg()
@@ -93,14 +110,29 @@ export function Register() {
         if (category.key === 'category')
             return Alert.alert('Selecione a categoria')
 
-        const data = {
+        const newTransaction = {
             nome: form.name,
             amount: form.amount,
             transactionType,
             category: category.key
         }
 
-        console.log(data)
+        try {
+
+            const data = await AsyncStorage.getItem(dataKey)
+            const currentData = data ? JSON.parse(data) : []
+
+            const dataFormatted = [
+                ...currentData,
+                newTransaction
+            ]
+
+            await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted))
+
+        } catch (error) {
+            console.log(error)
+            Alert.alert("Não foi possível salvar!")
+        }
     }
 
 
