@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
     Alert, Keyboard,
     Modal,
     TouchableWithoutFeedback,
+    View,
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import uuid from 'react-native-uuid'
 
 import { useForm } from 'react-hook-form'
+import { useNavigation } from '@react-navigation/native'
 
 import { Button } from '../../components/Forms/Button'
 import { CategorySelectButton } from '../../components/Forms/CategorySelectButton'
@@ -38,10 +41,12 @@ export function Register() {
         register,
         control,
         handleSubmit,
+        reset,
         formState: { errors }
     } = useForm()
 
-    const dataKey = '@gofinances:transactions'
+    const navigation = useNavigation()
+
 
     const [transactionType, setTransactionType] = useState('')
     const [categoryModalOpen, setCategoryModalOpen] = useState(false)
@@ -55,20 +60,6 @@ export function Register() {
         key: 'category',
         name: 'Categoria'
     })
-
-    useEffect(() => {
-        async function loadData() {
-            const data = await AsyncStorage.getItem(dataKey)
-            console.log('dataKey', JSON.parse(data!))
-        }
-
-        loadData()
-        // async function removeAll() {
-        //     await AsyncStorage.removeItem(dataKey)
-
-        // }
-        // removeAll()
-    }, [])
 
     function handleTransactionTypeSelect(type: 'up' | 'down') {
         setTransactionType(type)
@@ -111,14 +102,16 @@ export function Register() {
             return Alert.alert('Selecione a categoria')
 
         const newTransaction = {
-            nome: form.name,
+            id: String(uuid.v4()),
+            name: form.name,
             amount: form.amount,
             transactionType,
-            category: category.key
+            category: category.key,
+            date: new Date()
         }
 
         try {
-
+            const dataKey = '@gofinances:transactions'
             const data = await AsyncStorage.getItem(dataKey)
             const currentData = data ? JSON.parse(data) : []
 
@@ -128,6 +121,16 @@ export function Register() {
             ]
 
             await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted))
+
+            reset()
+            setTransactionType('')
+            setCategory({
+                key: 'category',
+                name: 'Categoria'
+            })
+
+            console.log(dataFormatted)
+            navigation.navigate('Listagem')
 
         } catch (error) {
             console.log(error)

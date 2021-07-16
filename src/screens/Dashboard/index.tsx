@@ -1,5 +1,7 @@
-import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react'
 import { getBottomSpace } from 'react-native-iphone-x-helper';
+
 
 import { HighlightCard } from '../../components/HighlightCard'
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard'
@@ -27,41 +29,49 @@ export interface DataListProps extends TransactionCardProps {
 }
 
 export function Dashboard() {
-    const data: DataListProps[] = [
-        {
-            id: '1',
-            type: 'positive',
-            title: "Desenvolvimento de sites",
-            amount: 'R$ 12.000,00',
-            category: {
-                name: 'Vendas',
-                icon: 'dollar-sign'
-            },
-            date: '13/04/2021'
-        },
-        {
-            id: '2',
-            type: 'negative',
-            title: "Hamburgueria",
-            amount: 'R$ 160,00',
-            category: {
-                name: 'Alimentação',
-                icon: 'coffee'
-            },
-            date: '10/04/2021'
-        },
-        {
-            id: '3',
-            type: 'negative',
-            title: "Aluguel apartamento",
-            amount: 'R$ 1200,00',
-            category: {
-                name: 'Casa',
-                icon: 'shopping-bag'
-            },
-            date: '18/04/2021'
-        },
-    ];
+    const dataKey = '@gofinances:transactions'
+    const [data, setData] = useState<DataListProps[]>([])
+
+    async function loadTransactions() {
+        const response = await AsyncStorage.getItem(dataKey)
+
+        const transactions = response ? JSON.parse(response) : []
+
+        const transactionsFormatted: DataListProps[] = transactions.map(
+            (transaction: DataListProps) => {
+                const amount = Number(transaction.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
+                const formattedDate = Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit'
+                })
+                    .format(new Date(transaction.date))
+
+                return {
+                    id: transaction.id,
+                    name: transaction.name,
+                    amount,
+                    type: transaction.type,
+                    category: transaction.category,
+                    date: formattedDate,
+                }
+            }
+        )
+
+        setData(transactionsFormatted)
+
+
+    }
+
+    useEffect(() => {
+        loadTransactions()
+        // async function removeAll() {
+        //     await AsyncStorage.removeItem(dataKey)
+
+        // }
+        // removeAll()
+    }, [])
 
     return (
         <Container>
