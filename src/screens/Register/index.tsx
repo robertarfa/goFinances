@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import {
     Alert, Keyboard,
     Modal,
+    Text,
     TouchableWithoutFeedback,
     View,
 } from 'react-native'
@@ -11,6 +12,7 @@ import uuid from 'react-native-uuid'
 import { useForm } from 'react-hook-form'
 import { useNavigation } from '@react-navigation/native'
 
+import { SuccessModal } from '../../components/SuccessModal/SuccessModal'
 import { Button } from '../../components/Forms/Button'
 import { CategorySelectButton } from '../../components/Forms/CategorySelectButton'
 import { InputForm } from '../../components/Forms/InputForm'
@@ -25,6 +27,7 @@ import {
     Fields,
     TransactionTypes
 } from './styles'
+import { ErrorModal } from '../../components/ErrorModal/ErrorModal'
 
 interface formData {
     name: string;
@@ -50,6 +53,8 @@ export function Register() {
 
     const [transactionType, setTransactionType] = useState('')
     const [categoryModalOpen, setCategoryModalOpen] = useState(false)
+    const [successModalOpen, setSuccessModalOpen] = useState(false)
+    const [errorModalOpen, setErrorModalOpen] = useState(false)
 
     const [objError, setObjError] = useState<errorData>({
         name: null,
@@ -61,7 +66,7 @@ export function Register() {
         name: 'Categoria'
     })
 
-    function handleTransactionTypeSelect(type: 'up' | 'down') {
+    function handleTransactionTypeSelect(type: 'positive' | 'negative') {
         setTransactionType(type)
     }
 
@@ -105,7 +110,7 @@ export function Register() {
             id: String(uuid.v4()),
             name: form.name,
             amount: form.amount,
-            transactionType,
+            type: transactionType,
             category: category.key,
             date: new Date()
         }
@@ -129,12 +134,23 @@ export function Register() {
                 name: 'Categoria'
             })
 
+            setSuccessModalOpen(true)
             console.log(dataFormatted)
-            navigation.navigate('Listagem')
+
+            setTimeout(() => {
+                navigation.navigate('Listagem')
+
+            }, 3000);
 
         } catch (error) {
             console.log(error)
-            Alert.alert("Não foi possível salvar!")
+            setErrorModalOpen(true)
+
+            setTimeout(() => {
+                setErrorModalOpen(false)
+
+            }, 3000);
+            // Alert.alert("Não foi possível salvar!")
         }
     }
 
@@ -171,15 +187,15 @@ export function Register() {
                             <TransactionTypeButton
                                 type='up'
                                 title='Income'
-                                onPress={() => handleTransactionTypeSelect('up')}
-                                isActive={transactionType === 'up'}
+                                onPress={() => handleTransactionTypeSelect('positive')}
+                                isActive={transactionType === 'positive'}
                             />
 
                             <TransactionTypeButton
                                 type='down'
                                 title='Outcome'
-                                onPress={() => handleTransactionTypeSelect('down')}
-                                isActive={transactionType === 'down'}
+                                onPress={() => handleTransactionTypeSelect('negative')}
+                                isActive={transactionType === 'negative'}
                             />
                         </TransactionTypes>
 
@@ -202,6 +218,9 @@ export function Register() {
                         closeSelectCategory={handleCloseSelectCategoryModal}
                     />
                 </Modal>
+
+                {successModalOpen && <SuccessModal text='Transação cadastrada com sucesso!' />}
+                {errorModalOpen && <ErrorModal text='Ocorreu um erro inesperado! Tente novamente!' />}
             </Container>
         </TouchableWithoutFeedback>
     )

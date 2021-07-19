@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react'
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 
@@ -63,6 +64,10 @@ export function Dashboard() {
 
 
     }
+
+    useFocusEffect(useCallback(() => {
+        loadTransactions()
+    }, []))
 
     useEffect(() => {
         loadTransactions()
