@@ -135,15 +135,16 @@ export function Register() {
             })
 
             setSuccessModalOpen(true)
-            console.log(dataFormatted)
+            // console.log(dataFormatted)
 
             setTimeout(() => {
                 navigation.navigate('Listagem')
+                setSuccessModalOpen(false)
 
             }, 3000);
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             setErrorModalOpen(true)
 
             setTimeout(() => {
