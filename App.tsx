@@ -1,27 +1,26 @@
-import React from 'react';
 import 'react-native-gesture-handler';
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 
-import AppLoading from 'expo-app-loading'
+import React from 'react';
+import { StatusBar } from 'react-native';
+import AppLoading from 'expo-app-loading';
 import { ThemeProvider } from 'styled-components';
 
-import { NavigationContainer } from '@react-navigation/native'
-import { StatusBar } from 'react-native'
+import { Routes } from './src/routes';
 
 import {
   useFonts,
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_700Bold
-} from '@expo-google-fonts/poppins'
+} from '@expo-google-fonts/poppins';
 
-import theme from './src/global/styles/theme'
+import theme from './src/global/styles/theme';
 
-import { AppRouter } from './src/routes/app.routes';
-import SignIn from './src/screens/SignIn';
+// import { SignIn } from './src/screens/SignIn';
 
-import { AuthProvider } from './src/hooks/auth'
+import { AuthProvider } from './src/hooks/auth';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -36,14 +35,10 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <StatusBar barStyle="light-content" />
-        <AuthProvider>
-          <SignIn />
-          {/* <AppRouter /> */}
-        </AuthProvider>
-      </NavigationContainer>
-    </ThemeProvider >
+      <StatusBar barStyle="light-content" />
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
-

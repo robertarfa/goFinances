@@ -13,7 +13,7 @@ import {
     Text,
 } from './styles'
 
-export default function SignInSocialButton({
+export function SignInSocialButton({
     title,
     svg: Svg,
     ...rest
