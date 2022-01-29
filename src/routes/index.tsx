@@ -12,7 +12,9 @@ export function Routes() {
 
     return (
         <NavigationContainer>
-            <AuthRoutes />
+            {
+                user.id ? <AppRoutes /> : <AuthRoutes />
+            }
         </NavigationContainer>
     );
 }
