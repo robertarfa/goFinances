@@ -9,7 +9,7 @@
 <h2>Preview do projeto 🚀</h2>
 
 <div align=center>
-  
+  <img width="250" src="https://github.com/robertarfa/goFinances/blob/main/gofinances.gif"/>
 </div>
 
 <h2>Sobre 🕵️</h2>
